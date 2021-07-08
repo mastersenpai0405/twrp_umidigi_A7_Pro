@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+# Release Name
+PRODUCT_RELEASE_NAME := UMIDIGI A7 Pro
+
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
@@ -29,4 +32,7 @@ PRODUCT_NAME := omni_A7_Pro
 PRODUCT_BRAND := UMIDIGI
 PRODUCT_MODEL := A7 Pro
 PRODUCT_MANUFACTURER := umidigi
-PRODUCT_RELEASE_NAME := UMIDIGI A7 Pro
+
+# Dynamic Partition
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+

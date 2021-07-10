@@ -49,7 +49,7 @@ on fs && property:ro.debuggable=0
     # set charging free due to it wait for USB activation
     start adbd
    
-service keymaster-4-0 /vendor/bin/android.hardware.keymaster@4.0-service.trustkernel
+service keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service.trustkernel
     user root
     group root drmrpc
     disabled

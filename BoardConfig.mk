@@ -97,6 +97,7 @@ PLATFORM_VERSION := 16.1.0
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
+USE_FSCRYPT := true
 
 # TWRP Configuration
 TW_THEME := portrait_hdpi

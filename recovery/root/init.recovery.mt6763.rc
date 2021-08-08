@@ -1,107 +1,62 @@
 import /init.recovery.trustkernel.rc
-on init
-    start hwservicemanager
-
-service hwservicemanager /system/bin/hwservicemanager
-    user root
-    group root
-    onrestart setprop hwservicemanager.ready false
-    disabled
-    seclabel u:r:recovery:s0
 
 on init
-    start vndservicemanager
-
-service vndservicemanager /system/bin/vndservicemanager /dev/vndbinder
-    disabled
-    user root
-    group root readproc
-    writepid /dev/cpuset/system-background/tasks
-    shutdown critical
-    seclabel u:r:recovery:s0
+    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
+    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw
     
+    mkdir /mnt/vendor/persist 0700 root root
+    mount ext4 /dev/block/platform/bootdevice/by-name/persist /mnt/vendor/persist
+
+on fs
+    install_keyring
+    setprop crypto.ready 1
+
+service keystore_auth /system/bin/keystore_auth
+    oneshot
+    user system
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
 service keystore /system/bin/keystore /tmp/misc/keystore
     user root
     group root drmrpc readproc
     disabled
     seclabel u:r:recovery:s0
     
-service keystore_auth /system/bin/keystore_auth
-    oneshot
+service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service
     user root
     group root
     disabled
     seclabel u:r:recovery:s0
-    
-on fs
-    install_keyring
-    setprop crypto.ready 1
-    start hwservicemanager
-    start servicemanager
 
-on init
-    setprop sys.usb.configfs 1
-    setprop sys.usb.ffs.aio_compat 1
-   
-service keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service.trustkernel
+service keymaster-4-0 /system/bin/android.hardware.keymaster@4.0-service.trustkernel
     user root
     group root drmrpc
     disabled
     seclabel u:r:recovery:s0
 
-service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
-    user root
-    group root
-    disabled
-    seclabel u:r:recovery:s0
-
 on property:hwservicemanager.ready=true
-    start teed
-    start keymaster-4-0-trustkernel
-    start gatekeeper-1-0-service
+    start keymaster-4-0
+    start gatekeeper-1-0
 
 on property:ro.crypto.state=unsupported
     stop teed
-    stop servicemanager
-    stop hwservicemanager
     stop keymaster-4-0
     stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager
 
 on property:ro.crypto.state=unencrypted
     stop teed
-    stop servicemanager
-    stop hwservicemanager
     stop keymaster-4-0
     stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager
 
 on property:twrp.decrypt.done=true
     stop teed
-    stop servicemanager
-    stop hwservicemanager
     stop keymaster-4-0
     stop gatekeeper-1-0
-    
-on init
-    mkdir /mnt/vendor 0755 root root
-    mkdir /mnt/vendor/apd 0771 root root
-    mkdir /mnt/vendor/protect_f 0770 root root
-    mkdir /mnt/vendor/protect_s 0770 root root
-    mkdir /mnt/vendor/persist 0755 root root
-    mkdir /mnt/vendor/nvdata 0771 root root
-    mkdir /mnt/vendor/nvcfg 0771 root root
-    mount ext4 /dev/block/platform/bootdevice/by-name/apd /mnt/vendor/apd rw wait
-    mount ext4 /dev/block/platform/bootdevice/by-name/protect1 /mnt/vendor/protect_f rw wait
-    mount ext4 /dev/block/platform/bootdevice/by-name/protect2 /mnt/vendor/protect_s rw wait
-    mount ext4 /dev/block/platform/bootdevice/by-name/persist /mnt/vendor/persist rw wait
-    mount ext4 /dev/block/platform/bootdevice/by-name/nvdata /mnt/vendor/nvdata rw wait
-    mount ext4 /dev/block/platform/bootdevice/by-name/nvcfg /mnt/vendor/nvcfg rw wait
-
-    
-service trustkernel.twrp /vendor/bin/trustkernel.twrp.sh
-    user root
-    group root
-    disabled
-    seclabel u:r:recovery:s0    
-    
-on early-fs
-    start trustkernel.twrp
+    stop servicemanager
+    stop hwservicemanager

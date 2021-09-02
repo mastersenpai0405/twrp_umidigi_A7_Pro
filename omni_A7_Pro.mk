@@ -16,9 +16,6 @@
 # limitations under the License.
 #
 
-# Release Name
-PRODUCT_RELEASE_NAME := UMIDIGI A7 Pro
-
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)

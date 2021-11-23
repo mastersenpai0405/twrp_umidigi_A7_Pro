@@ -25,7 +25,7 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := A7_Pro
-PRODUCT_NAME := omni_A7_Pro
+PRODUCT_NAME := twrp_A7_Pro
 PRODUCT_BRAND := UMIDIGI
 PRODUCT_MODEL := A7 Pro
 PRODUCT_MANUFACTURER := umidigi
